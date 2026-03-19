@@ -1,4 +1,5 @@
-// EMA (European Medicines Agency) MCP Server
+// EMA (European Medicines Agency) MCP Server — 2,641+ centrally authorized EU medicines
+// Code Mode only: ema_search, ema_execute, query_data, get_schema
 import { McpAgent } from "agents/mcp";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerQueryData } from "./tools/query-data";

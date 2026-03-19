@@ -2,16 +2,21 @@ import type { ApiFetchFn } from "@bio-mcp/shared/codemode/catalog";
 import { emaFetch } from "./http";
 
 /**
- * Route map: Code Mode clean paths -> EMA API paths
+ * Route map: Code Mode clean paths -> EMA static JSON report endpoints.
+ * EMA serves data as static JSON files under /en/documents/report/.
+ * Response format: { meta: { total_records, timestamp }, data: [...] }
  */
 const ROUTE_MAP: Record<string, string> = {
-    "/medicines": "/en/api/v1/medicines",
-    "/orphan-designations": "/en/api/v1/orphan-designations",
-    "/paediatric": "/en/api/v1/paediatric-investigation-plans",
-    "/dhpcs": "/en/api/v1/dhpcs",
-    "/shortages": "/en/api/v1/shortages",
-    "/psusa": "/en/api/v1/psusa",
-    "/epars": "/en/api/v1/epars",
+    "/medicines": "/en/documents/report/medicines-output-medicines_json-report_en.json",
+    "/orphan-designations": "/en/documents/report/medicines-output-orphan_designations-json-report_en.json",
+    "/paediatric": "/en/documents/report/medicines-output-paediatric_investigation_plans-output-json-report_en.json",
+    "/dhpcs": "/en/documents/report/dhpc-output-json-report_en.json",
+    "/shortages": "/en/documents/report/shortages-output-json-report_en.json",
+    "/psusa": "/en/documents/report/medicines-output-periodic_safety_update_report_single_assessments-output-json-report_en.json",
+    "/epars": "/en/documents/report/documents-output-epar_documents_json-report_en.json",
+    "/post-authorisation": "/en/documents/report/medicines-output-post_authorisation_json-report_en.json",
+    "/referrals": "/en/documents/report/referrals-output-json-report_en.json",
+    "/all-documents": "/en/documents/report/documents-output-json-report_en.json",
 };
 
 export function createEmaApiFetch(): ApiFetchFn {

@@ -11,7 +11,7 @@ function envToRecord(env: Partial<Env>): Record<string, unknown> {
     return record;
 }
 
-export function registerQueryData(server: McpServer, env?: Partial<Env>) {
+export function registerQueryData(server: McpServer, env?: Partial<Env>): void {
     const handler = createQueryDataHandler("EMA_DATA_DO", "ema");
 
     server.registerTool(

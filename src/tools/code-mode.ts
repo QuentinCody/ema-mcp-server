@@ -21,7 +21,7 @@ function asRegistrar(server: McpServer): ToolRegistrar {
 export function registerCodeMode(
     server: McpServer,
     env: Pick<Env, "EMA_DATA_DO" | "CODE_MODE_LOADER">,
-) {
+): void {
     const apiFetch = createEmaApiFetch();
     const registrar = asRegistrar(server);
 

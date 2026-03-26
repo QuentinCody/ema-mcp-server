@@ -11,7 +11,7 @@ function envToRecord(env: Partial<Env>): Record<string, unknown> {
     return record;
 }
 
-export function registerGetSchema(server: McpServer, env?: Partial<Env>) {
+export function registerGetSchema(server: McpServer, env?: Partial<Env>): void {
     const handler = createGetSchemaHandler("EMA_DATA_DO", "ema");
 
     server.registerTool(

@@ -33,6 +33,8 @@ export function registerCodeMode(
 
     const executeTool = createExecuteTool({
         prefix: "ema",
+        // Verifiable provenance: ema_execute results carry a _meta.citation.
+        source: { id: "ema", name: "European Medicines Agency", url: "https://www.ema.europa.eu" },
         catalog: emaCatalog,
         apiFetch,
         doNamespace: env.EMA_DATA_DO,

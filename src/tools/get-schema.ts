@@ -32,7 +32,7 @@ export function registerGetSchema(server: McpServer, env?: Partial<Env>): void {
             const argsRecord: Record<string, unknown> = {
                 data_access_id: args.data_access_id,
             };
-            const sessionId = (extra as { sessionId?: string })?.sessionId;
+            const sessionId = (extra as Record<string, unknown>);
             return handler(argsRecord, envToRecord(resolvedEnv), sessionId);
         },
     );

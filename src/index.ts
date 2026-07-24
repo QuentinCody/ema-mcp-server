@@ -1,3 +1,4 @@
+import { buildHealthResponse, configureCitationSigning } from "@bio-mcp/shared";
 // EMA (European Medicines Agency) MCP Server — 2,641+ centrally authorized EU medicines
 // Code Mode only: ema_search, ema_execute, query_data, get_schema
 import { McpAgent } from "agents/mcp";
@@ -16,6 +17,8 @@ export class MyMCP extends McpAgent<Env> {
     });
 
     async init() {
+
+    	configureCitationSigning(this.env);
         registerQueryData(this.server, this.env);
         registerGetSchema(this.server, this.env);
         registerCodeMode(this.server, this.env);
@@ -27,10 +30,7 @@ export default {
         const url = new URL(request.url);
 
         if (url.pathname === "/health") {
-            return new Response("ok", {
-                status: 200,
-                headers: { "content-type": "text/plain" },
-            });
+            return buildHealthResponse("ema");
         }
 
         if (url.pathname === "/mcp") {

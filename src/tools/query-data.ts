@@ -1,6 +1,7 @@
 import type { McpServer } from "@bio-mcp/shared/mcp";
 import { z } from "zod";
 import { createQueryDataHandler } from "@bio-mcp/shared/staging/utils";
+import { emaResponse } from "../lib/tool-result";
 
 /** Convert a typed env object to the Record<string, unknown> the handler expects. */
 function envToRecord(env: Partial<Env>): Record<string, unknown> {
@@ -14,8 +15,8 @@ function envToRecord(env: Partial<Env>): Record<string, unknown> {
 export function registerQueryData(server: McpServer, env?: Partial<Env>): void {
     const handler = createQueryDataHandler("EMA_DATA_DO", "ema");
 
-    server.registerTool(
-        "ema_query_data",
+    for (const name of ["ema_query_data", "mcp_ema_query_data"]) server.registerTool(
+        name,
         {
             title: "Query Staged EMA Data",
             description:
@@ -33,7 +34,7 @@ export function registerQueryData(server: McpServer, env?: Partial<Env>): void {
                 sql: args.sql,
                 limit: args.limit,
             };
-            return handler(argsRecord, envToRecord(resolvedEnv));
+            return emaResponse(() => handler(argsRecord, envToRecord(resolvedEnv)), resolvedEnv, name, args, extra);
         },
     );
 }

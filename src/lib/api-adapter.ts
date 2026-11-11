@@ -1,5 +1,7 @@
 import type { ApiFetchFn } from "@bio-mcp/shared/codemode/catalog";
-import { emaFetch } from "./http";
+import { createPmsFetch } from "./pms";
+import type { PmsCredentials } from "./pms-auth";
+import { fetchWebsiteFeed } from "./website";
 
 /**
  * Route map: Code Mode clean paths -> EMA static JSON report endpoints.
@@ -19,43 +21,24 @@ const ROUTE_MAP: Record<string, string> = {
     "/all-documents": "/en/documents/report/documents-output-json-report_en.json",
 };
 
-export function createEmaApiFetch(): ApiFetchFn {
+export function createEmaApiFetch(env: PmsCredentials = {}, fetcher: typeof fetch = fetch): ApiFetchFn {
+    const pms = createPmsFetch(env, fetcher);
     return async (request) => {
+        if (request.path === "/pms" || request.path.startsWith("/pms/")) return pms(request);
+        if (request.method !== "GET" || request.body !== undefined) throw new Error("EMA website feeds support GET without a body");
         let path = request.path;
 
         // Map clean Code Mode paths to actual EMA API paths
         for (const [clean, actual] of Object.entries(ROUTE_MAP)) {
-            if (path === clean || path.startsWith(`${clean}?`)) {
-                path = actual + path.slice(clean.length);
+            if (path === clean) {
+                path = actual;
                 break;
             }
         }
 
-        const response = await emaFetch(path, request.params);
-
-        if (!response.ok) {
-            let errorBody: string;
-            try {
-                errorBody = await response.text();
-            } catch {
-                errorBody = response.statusText;
-            }
-            const error = new Error(`HTTP ${response.status}: ${errorBody.slice(0, 200)}`) as Error & {
-                status: number;
-                data: unknown;
-            };
-            error.status = response.status;
-            error.data = errorBody;
-            throw error;
-        }
-
-        const contentType = response.headers.get("content-type") || "";
-        if (!contentType.includes("json")) {
-            const text = await response.text();
-            return { status: response.status, data: text };
-        }
-
-        const data = await response.json();
-        return { status: response.status, data };
+        if (!Object.values(ROUTE_MAP).includes(path)) throw new Error("Unknown EMA website feed; use ema_search for supported routes");
+        if (Object.keys(request.params ?? {}).length) throw new Error("EMA website files have no server-side search or paging; query the returned/staged feed locally");
+        const url = `https://www.ema.europa.eu${path}`;
+        return fetchWebsiteFeed(url, fetcher);
     };
 }

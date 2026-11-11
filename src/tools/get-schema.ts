@@ -1,6 +1,7 @@
 import type { McpServer } from "@bio-mcp/shared/mcp";
 import { z } from "zod";
 import { createGetSchemaHandler } from "@bio-mcp/shared/staging/utils";
+import { emaResponse } from "../lib/tool-result";
 
 /** Convert a typed env object to the Record<string, unknown> the handler expects. */
 function envToRecord(env: Partial<Env>): Record<string, unknown> {
@@ -14,8 +15,8 @@ function envToRecord(env: Partial<Env>): Record<string, unknown> {
 export function registerGetSchema(server: McpServer, env?: Partial<Env>): void {
     const handler = createGetSchemaHandler("EMA_DATA_DO", "ema");
 
-    server.registerTool(
-        "ema_get_schema",
+    for (const name of ["ema_get_schema", "mcp_ema_get_schema"]) server.registerTool(
+        name,
         {
             title: "Get Staged Data Schema",
             description:
@@ -33,7 +34,7 @@ export function registerGetSchema(server: McpServer, env?: Partial<Env>): void {
                 data_access_id: args.data_access_id,
             };
             const sessionId = (extra as Record<string, unknown>);
-            return handler(argsRecord, envToRecord(resolvedEnv), sessionId);
+            return emaResponse(() => handler(argsRecord, envToRecord(resolvedEnv), sessionId), resolvedEnv, name, args, extra);
         },
     );
 }

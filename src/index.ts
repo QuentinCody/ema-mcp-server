@@ -1,5 +1,5 @@
 import { buildHealthResponse, configureCitationSigning } from "@bio-mcp/shared";
-// EMA (European Medicines Agency) MCP Server — 2,641+ centrally authorized EU medicines
+// EMA website feeds and separate PMS public beta FHIR R5 product data
 // Code Mode only: ema_search, ema_execute, query_data, get_schema
 import { StatelessMcpWorker } from "@bio-mcp/shared/mcp";
 import { McpServer } from "@bio-mcp/shared/mcp";
@@ -7,10 +7,11 @@ import { registerQueryData } from "./tools/query-data";
 import { registerGetSchema } from "./tools/get-schema";
 import { registerCodeMode } from "./tools/code-mode";
 import { EmaDataDO } from "./do";
+import type { PmsCredentials } from "./lib/pms-auth";
 
 export { EmaDataDO };
 
-export class MyMCP extends StatelessMcpWorker<Env> {
+export class MyMCP extends StatelessMcpWorker<Env & PmsCredentials> {
     server = new McpServer({
         name: "ema",
         version: "0.1.0",
